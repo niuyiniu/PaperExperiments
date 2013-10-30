@@ -9,6 +9,7 @@ import jxl.write.Label;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
+import jxl.write.biff.RowsExceededException;
 
 public class ExcelHandler {
 
@@ -20,56 +21,83 @@ public class ExcelHandler {
 	
 	
 	//write the request array into file file and in a sheet named sheetname
-	public void writeArray(int[] array,File file, String sheetname){
-		WritableWorkbook wwb = null;
-		// 创建Excel工作表
-//		WritableSheet sheet1 = null;
-		Workbook wb = null;
+	public void writeArray(int[] array, String[] periods, String sheetname,WritableWorkbook wwb){
+
 		try {
-			// Excel获得文件
-			wb = Workbook.getWorkbook(file);
-
-			// 打开一个文件的副本，并且指定数据写回到原文件
-			wwb = Workbook.createWorkbook(file, wb);
-			
-			
-			
-			WritableSheet[] sheets = wwb.getSheets();
-			
+			WritableSheet[] sheets = wwb.getSheets();			
 			int sheetnum = sheets.length;
-
-			// 读取第一张工作表
-//			sheet1 = wwb.getSheet(0);
-//
-//			Label l = new Label(0, 0, "姓名");// 第1行
-//			sheet1.addCell(l);
-//			l = new Label(1, 0, "电话");
-//			sheet1.addCell(l);
-//			l = new Label(2, 0, "地址");
-//			sheet1.addCell(l);
-//			l = new Label(0, 1, "小祝");// 第2行
-//			sheet1.addCell(l);
-//			l = new Label(1, 1, "1314***0974");
-//			sheet1.addCell(l);
-//			l = new Label(2, 1, "武汉武昌");
-//			sheet1.addCell(l);
-
-			// 添加一个工作表
+			System.out.println("now have " + sheetnum +" sheets,creating the next one");
+			// add a new sheet
 			WritableSheet newsheet = wwb.createSheet(sheetname, sheetnum);
-			//newsheet.addCell(new Label(0, 0, "第二页的测试数据"));
-
-			// 输出流
-			wwb.write();
-
-			// 关闭流
-			wwb.close();
+			System.out.println("number of sheets after creating : " + wwb.getSheets().length);
+			
+			writePeriod(0, newsheet, periods);
+			writeRequest(1, newsheet, array);
+			for(int i = 0; i < array.length; i++){
+				newsheet.addCell(new Label(1, i, Integer.toString(array[i])));
+			}
 		} catch (WriteException e) {
 			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (BiffException e) {
-			e.printStackTrace();
-		}		
+		}				
+	}
+	
+	private void writePeriod(int columnIndex, WritableSheet ws, String[] content){
+		for(int i = 0; i < content.length; i++){
+			try {
+				ws.addCell(new Label(columnIndex, i, content[i]));
+			} catch (RowsExceededException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (WriteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	private void writeRequest(int columnIndex, WritableSheet ws, int[] content){
+		for(int i = 0; i < content.length; i++){
+			try {
+				ws.addCell(new Label(columnIndex, i, Integer.toString(content[i])));
+			} catch (RowsExceededException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (WriteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void appendRequest(int[] requests, WritableWorkbook wwb){
+		WritableSheet newsheet = wwb.getSheet(0);
+		Cell[] cells = newsheet.getColumn(1);
+		for(int i = 0; i < requests.length; i++){
+			try {
+				newsheet.addCell(new Label(1, cells.length + i, Integer.toString(requests[i])));
+			} catch (RowsExceededException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (WriteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void writeAllPeriods(String[] periods, String sheetname, WritableWorkbook wwb){
+		WritableSheet newsheet = wwb.createSheet(sheetname, 0);
+		for(int i = 0; i < periods.length; i++){
+			try {
+				newsheet.addCell(new Label(0, i, periods[i]));
+			} catch (RowsExceededException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (WriteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
 	}
 	

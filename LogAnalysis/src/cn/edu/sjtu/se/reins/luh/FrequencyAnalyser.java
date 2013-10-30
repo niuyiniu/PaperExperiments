@@ -15,19 +15,25 @@ import cn.edu.sjtu.se.reins.luh.utils.RequestParser;
 public class FrequencyAnalyser {
 	static SimpleDateFormat simFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
 	public static String START_TIME = "1998.01.23 22:00:01";
-	public static int PERIOD = 10;//表示一个时间间隔是5分钟
+	public static int PERIOD = 10;//锟斤拷示一锟斤拷时锟斤拷锟斤拷锟斤拷5锟斤拷锟斤拷
 	public static int SPLIT_NUMS = 24*60/PERIOD;
-	public static String INPUT_PATH = "G:\\workload\\day81.out";
-    public static int[] getFrequency(){ 	
+	public String INPUT_PATH = "";
+	
+	public FrequencyAnalyser(){
+		
+	}
+	
+    public int[] getFrequency(){ 	
     	int[] frequency = new int[SPLIT_NUMS];
     	for(int i=0; i<SPLIT_NUMS; i++){
     		frequency[i]=0;
     	}
     	try {
     		Date start_time = simFormat.parse(START_TIME);
-			BufferedReader br = new BufferedReader(new FileReader(new File(INPUT_PATH)));
+			BufferedReader br = new BufferedReader(new FileReader(new File(getINPUT_PATH())));
 			String oneLine = br.readLine();
-			oneLine = br.readLine();			
+			oneLine = br.readLine();
+			Request r = RequestParser.parseRequestString(oneLine, RequestParser.getDefaultDateFormat());
 			start_time = RequestParser.parseRequestString(oneLine, RequestParser.getDefaultDateFormat()).getDate();
 			int numbers = 0;
 			int null_numbers = 0;
@@ -39,7 +45,7 @@ public class FrequencyAnalyser {
 					oneLine = br.readLine();
 					continue;
 				}
-				//当前时间和起始时间的差距
+				//
 				long gap_minute = (request.getDate().getTime()-start_time.getTime())/(1000*60);
 				int index = (int) (gap_minute/PERIOD);
 				if(index >= 0 && index < SPLIT_NUMS){
@@ -48,11 +54,12 @@ public class FrequencyAnalyser {
 					System.out.println("out of index!");
 				}
 				numbers++;
-				if(numbers%100000 == 0){
+				if(numbers%1000000 == 0){
 					System.out.println("Have already done the first "+numbers+" logs");
 				}
 				oneLine = br.readLine();
 			}
+			br.close();
 			System.out.println("now all get done");
 			System.out.println("null numbers: "+null_numbers);
 			for(int i=0; i < SPLIT_NUMS; i++){
@@ -71,4 +78,10 @@ public class FrequencyAnalyser {
 		return frequency;
     	
     }
+	public String getINPUT_PATH() {
+		return INPUT_PATH;
+	}
+	public void setINPUT_PATH(String iNPUT_PATH) {
+		INPUT_PATH = iNPUT_PATH;
+	}
 }

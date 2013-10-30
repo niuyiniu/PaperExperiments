@@ -44,8 +44,9 @@ public class RequestParser {
 		try {
 			dateString = tokens[RequestToken.Date.getIndex()];
 			resource = tokens[RequestToken.Resource.getIndex()];
-			String sizeString = tokens[RequestToken.ReplySize.getIndex()];
-			size = Integer.parseInt(sizeString);
+			int i = RequestToken.ReplySize.getIndex();
+			//String sizeString = tokens[RequestToken.ReplySize.getIndex()];
+			//size = Integer.parseInt(sizeString);
 		} catch (Exception ex) {
 			// ignore
 			return null;
@@ -55,7 +56,7 @@ public class RequestParser {
 		Date date = RequestParser.parseRequestDate(dateString, df);
 		r.setResource(resource);
 		r.setDate(date); // set the time(in milliseconds) after the start time
-		r.setSize(size);
+		//r.setSize(size);
 		return r;
 	}
 }
